@@ -1,0 +1,7 @@
+/* Move the @import statement above @tailwind */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@500;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
