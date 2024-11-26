@@ -53,7 +53,7 @@ const LeavePage = () => {
 
   return (
     <div className="p-6 flex gap-6">
-      {/* Applied Leaves Section */}
+     
       <div className="flex-1">
         <div className="bg-purple-700 rounded-t-lg">
           <div className="px-6 py-4">
@@ -105,7 +105,7 @@ const LeavePage = () => {
         </div>
       </div>
 
-     
+    
       <div className="w-80">
         <div className="bg-purple-700 rounded-t-lg">
           <div className="px-6 py-4">

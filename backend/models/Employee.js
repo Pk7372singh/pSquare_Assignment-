@@ -18,7 +18,7 @@ const employeeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  role: {
+  position: {
     type: String,
     required: true,
   },
@@ -26,7 +26,7 @@ const employeeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  resume: {
+  dateOfJoining: {
     type: String, 
     required: true,
   },

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from 'axios';
 import DashboardTable from "./DashboardTable";
 
 const Attendees = () => {
@@ -28,9 +29,27 @@ const Attendees = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted", formData);
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append('fullName', formData.fullName);
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('department', formData.department);
+      formDataToSend.append('phoneNumber', formData.phoneNumber);
+      formDataToSend.append('experience', formData.experience);
+      formDataToSend.append('resume', formData.resume);
+
+      const response = await axios.post('http://localhost:5000/api/attendances', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log("Response from server: ", response.data);
+      setFormVisible(false); 
+    } catch (error) {
+      console.error("Error submitting the form: ", error);
+    }
   };
 
   const columns = [
@@ -64,7 +83,6 @@ const Attendees = () => {
           </div>
         </div>
 
-       
         <div className="flex space-x-4 mb-4">
           <div className="p-4 bg-white-100 rounded-lg w-1/4 h-24">
             <select className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -104,9 +122,14 @@ const Attendees = () => {
           </div>
         </div>
 
-        
         {formVisible && (
-          <div className="mt-6">
+          <div className="mt-6 relative">
+            <button
+              className="absolute top-2 right-2 text-white text-xl"
+              onClick={() => setFormVisible(false)}
+            >
+              <i className="fas fa-times"></i>
+            </button>
             <h2
               className="w-full py-3 text-white font-semibold rounded-lg text-sm text-center"
               style={{
@@ -207,17 +230,17 @@ const Attendees = () => {
                     id="resume"
                     name="resume"
                     onChange={handleFileChange}
-                    className="w-full mt-2 p-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full p-3 mt-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
 
-                <div className="col-span-2 text-center mt-6">
+                <div className="col-span-2 text-center mt-6 mb-4">
                   <button
                     type="submit"
-                    className="w-20 py-2 text-gray font-semibold rounded-lg text-sm"
+                    className="w-20 py-2  text-gray font-semibold rounded-lg text-sm"
                     style={{
-                      background: "rgba(164, 164, 164, 1)",
+                      background: 'rgba(164, 164, 164, 1)',
                     }}
                   >
                     Save
@@ -227,15 +250,7 @@ const Attendees = () => {
             </form>
           </div>
         )}
-
-        <div className="p-6">
-          <h1 className="text-2xl font-bold mb-6">Employees</h1>
-          <DashboardTable
-            columns={columns}
-            data={employeesData}
-            type="employees"
-          />
-        </div>
+        <DashboardTable columns={columns} data={employeesData} />
       </div>
     </div>
   );

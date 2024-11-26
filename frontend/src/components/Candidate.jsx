@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardTable from './DashboardTable';
+import axios from 'axios';
+import apiConfig from '../apiConfig';
 
 const Candidate = () => {
   const [formVisible, setFormVisible] = useState(false);
+  const [candidates, setCandidates] = useState([]);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -28,10 +31,41 @@ const Candidate = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Form submitted', formData);
+
+    const formDataToSend = new FormData();
+    for (const key in formData) {
+      formDataToSend.append(key, formData[key]);
+    }
+
+    try {
+      const response = await axios.post(`${apiConfig.API_BASE_URL}/api/candidates/`, formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log('Response:', response.data);
+      fetchCandidates(); 
+      setFormVisible(false); 
+    } catch (error) {
+      console.error('Error submitting form', error);
+    }
   };
+
+  const fetchCandidates = async () => {
+    try {
+      const response = await axios.get(`${apiConfig.API_BASE_URL}/api/candidates/`);
+      setCandidates(response.data);
+    } catch (error) {
+      console.error('Error fetching candidates', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCandidates();
+  }, []);
 
   const columns = [
     { header: 'Sr no.', key: 'text', dataKey: 'srNo' },
@@ -112,7 +146,7 @@ const Candidate = () => {
         </div>
 
         {formVisible && (
-          <div className="mt-6">
+          <div className="mt-6 relative">
             <h2
               className="w-full py-3 text-white font-semibold rounded-lg text-sm text-center"
               style={{
@@ -121,6 +155,18 @@ const Candidate = () => {
             >
               Add New Candidate
             </h2>
+
+           
+            <button
+              onClick={() => setFormVisible(false)}
+              className="absolute top-0 right-0 p-2 text-white"
+              style={{
+                background: 'transparent',
+                border: 'none',
+              }}
+            >
+              <i className="fas fa-times text-white text-xl"></i>
+            </button>
 
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-2 gap-6">
@@ -213,29 +259,16 @@ const Candidate = () => {
                     id="resume"
                     name="resume"
                     onChange={handleFileChange}
-                    className="w-full mt-0 p-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full p-3 mt-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
+              </div>
 
-              
-                <div className="col-span-2 mt-4 text-left">
-                  <input
-                    type="checkbox"
-                    id="declaration"
-                    name="declaration"
-                    className="mr-2"
-                    required
-                  />
-                  <label htmlFor="declaration" className="text-sm font-medium text-gray-700">
-                    I declare that the above information is true and accurate.
-                  </label>
-                </div>
-
-                 <div className="col-span-2 text-center mt-6">
+              <div className="col-span-2 text-center mt-6">
                   <button
                     type="submit"
-                    className="w-20 py-2  text-gray font-semibold rounded-lg text-sm"
+                    className="w-20 py-2 mb-4 text-gray font-semibold rounded-lg text-sm"
                     style={{
                       background: 'rgba(164, 164, 164, 1)',
                     }}
@@ -243,14 +276,12 @@ const Candidate = () => {
                     Save
                   </button>
                 </div>
-              </div>
             </form>
           </div>
         )}
-      </div>
 
-      
-      <DashboardTable columns={columns} data={candidatesData} />
+        <DashboardTable columns={columns} data={candidatesData} />
+      </div>
     </div>
   );
 };

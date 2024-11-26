@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios"; 
 import LeavePage from "./LeavePage";
 
 const Leaves = () => {
@@ -7,21 +8,49 @@ const Leaves = () => {
     employeeName: "",
     leaveType: "",
     startDate: "",
-    attachment: "",
+    attachment: null, 
     reason: "",
   });
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    const { name, value, type, files } = e.target;
+    if (type === "file") {
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: files[0],  
+      }));
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Form submitted", formData);
+
+    const form = new FormData();
+    form.append("employeeName", formData.employeeName);
+    form.append("leaveType", formData.leaveType);
+    form.append("startDate", formData.startDate);
+    form.append("attachment", formData.attachment);  
+    form.append("reason", formData.reason);
+
+    try {
+     
+      const response = await axios.post("http://localhost:5000/api/leaves", form, {
+        headers: {
+          "Content-Type": "multipart/form-data", 
+        },
+      });
+      console.log("Leave request submitted:", response.data);
+     
+      setFormVisible(false);
+    } catch (error) {
+      console.error("Error submitting leave request:", error);
+    }
   };
 
   return (
@@ -76,14 +105,22 @@ const Leaves = () => {
 
         {formVisible && (
           <div className="mt-6">
-            <h2
-              className="w-full py-3 text-white font-semibold rounded-lg text-sm text-center"
+            <div
+              className="flex items-center justify-between py-3 px-4 rounded-lg text-white font-semibold text-sm"
               style={{
                 background: "linear-gradient(180deg, #783FED 0%, #442487 100%)",
               }}
             >
-              Add New Leave
-            </h2>
+              <h2 className="text-center flex-1">Add New Employee</h2>
+              <button
+                onClick={() => setFormVisible(false)}
+                className="text-xl font-bold focus:outline-none"
+                title="Close"
+                style={{ background: "transparent" }}
+              >
+                &times;
+              </button>
+            </div>
 
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-2 gap-6">
@@ -177,12 +214,12 @@ const Leaves = () => {
                   />
                 </div>
 
-                <div className="col-span-2 text-center mt-6">
+                <div className="col-span-2 text-center mt-6 mb-4">
                   <button
                     type="submit"
-                    className="w-20 py-2 text-gray font-semibold rounded-lg text-sm"
+                    className="w-20 py-2  text-gray font-semibold rounded-lg text-sm"
                     style={{
-                      background: "rgba(164, 164, 164, 1)",
+                      background: 'rgba(164, 164, 164, 1)',
                     }}
                   >
                     Save
@@ -192,6 +229,7 @@ const Leaves = () => {
             </form>
           </div>
         )}
+
         <LeavePage />
       </div>
     </div>

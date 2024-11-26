@@ -34,6 +34,7 @@ exports.getApprovedLeaves = async (req, res) => {
   }
 };
 
+
 exports.getTodayApprovedLeaves = async (req, res) => {
   const today = new Date().toISOString().split('T')[0];
   try {

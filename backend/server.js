@@ -20,6 +20,7 @@ app.use(cors());
 
 app.use('/api/auth', authRoutes);
 
+
 app.use('/api/candidates', protect, candidateRoutes);
 app.use('/api/employees', protect, employeeRoutes);  
 app.use('/api/leaves', protect, leaveRoutes);

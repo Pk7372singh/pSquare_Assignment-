@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MoreVertical } from 'lucide-react';
 
 const StatusBadge = ({ status }) => {
@@ -47,24 +47,7 @@ const DashboardTable = ({ columns, data, type = 'employees' }) => {
           </thead>
           <tbody className="divide-y divide-gray-200">
             {data.map((row, rowIndex) => (
-              <tr key={rowIndex} className="hover:bg-gray-50">
-                {columns.map((column, colIndex) => (
-                  <td key={colIndex} className="px-6 py-4 text-sm text-gray-700">
-                    {column.key === 'profile' ? (
-                      <ProfileCell image={row.image} name={row[column.dataKey]} />
-                    ) : column.key === 'status' ? (
-                      <StatusBadge status={row[column.dataKey]} />
-                    ) : (
-                      row[column.dataKey]
-                    )}
-                  </td>
-                ))}
-                <td className="px-6 py-4 text-right">
-                  <button className="text-gray-400 hover:text-gray-600">
-                    <MoreVertical size={20} />
-                  </button>
-                </td>
-              </tr>
+              <TableRow key={rowIndex} columns={columns} row={row} />
             ))}
           </tbody>
         </table>
@@ -72,4 +55,62 @@ const DashboardTable = ({ columns, data, type = 'employees' }) => {
     </div>
   );
 };
+
+const TableRow = ({ columns, row }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleMenu = () => setIsOpen(!isOpen);
+
+  const handleEdit = () => {
+   
+    console.log('Edit clicked for', row);
+  };
+
+  const handleDelete = () => {
+   
+    console.log('Delete clicked for', row);
+  };
+
+  return (
+    <tr className="hover:bg-gray-50">
+      {columns.map((column, colIndex) => (
+        <td key={colIndex} className="px-6 py-4 text-sm text-gray-700">
+          {column.key === 'profile' ? (
+            <ProfileCell image={row.image} name={row[column.dataKey]} />
+          ) : column.key === 'status' ? (
+            <StatusBadge status={row[column.dataKey]} />
+          ) : (
+            row[column.dataKey]
+          )}
+        </td>
+      ))}
+      <td className="px-6 py-4 text-right">
+        <button className="text-gray-400 hover:text-gray-600" onClick={toggleMenu}>
+          <MoreVertical size={20} />
+        </button>
+
+     
+        {isOpen && (
+          <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-md z-10">
+            <ul>
+              <li
+                onClick={handleEdit}
+                className="px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
+              >
+                Edit
+              </li>
+              <li
+                onClick={handleDelete}
+                className="px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer"
+              >
+                Delete
+              </li>
+            </ul>
+          </div>
+        )}
+      </td>
+    </tr>
+  );
+};
+
 export default DashboardTable;

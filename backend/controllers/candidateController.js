@@ -3,7 +3,7 @@ const Employee = require('../models/Employee');
 const fs = require('fs');
 const path = require('path');
 
-
+// Create Candidate
 exports.createCandidate = async (req, res) => {
   const { fullName, email, phone, department, experience, resume } = req.body;
   try {
@@ -14,7 +14,7 @@ exports.createCandidate = async (req, res) => {
   }
 };
 
-
+// Get All Candidates
 exports.getAllCandidates = async (req, res) => {
   try {
     const candidates = await Candidate.find();
@@ -24,7 +24,7 @@ exports.getAllCandidates = async (req, res) => {
   }
 };
 
-
+// Update Candidate
 exports.updateCandidate = async (req, res) => {
   const { id } = req.params;
   const { fullName, email, phone, department, experience, resume } = req.body;
@@ -36,7 +36,7 @@ exports.updateCandidate = async (req, res) => {
   }
 };
 
-
+// Delete Candidate
 exports.deleteCandidate = async (req, res) => {
   const { id } = req.params;
   try {
@@ -47,7 +47,7 @@ exports.deleteCandidate = async (req, res) => {
   }
 };
 
-
+// Download Resume
 exports.downloadResume = async (req, res) => {
   const { id } = req.params;
   try {
@@ -62,7 +62,7 @@ exports.downloadResume = async (req, res) => {
   }
 };
 
-
+// Move Candidate to Employee
 exports.moveToEmployee = async (req, res) => {
   const { id } = req.params;
   try {
@@ -86,7 +86,7 @@ exports.moveToEmployee = async (req, res) => {
   }
 };
 
-
+// Filter and Search Candidates
 exports.filterCandidates = async (req, res) => {
   const { fullName, department, email } = req.query;
   try {
